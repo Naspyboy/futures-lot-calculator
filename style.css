@@ -9,6 +9,7 @@
   --accent-soft: rgba(56, 189, 248, 0.15);
   --error: #fb7185;
   --success: #4ade80;
+  --warn: #fbbf24;
   --radius: 18px;
 }
 
@@ -26,14 +27,15 @@ body {
 
 .app-shell {
   width: min(980px, 92vw);
-  margin: 2rem auto;
+  margin: 2rem auto 1rem;
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 1.2rem;
 }
 
 .panel,
-.result-card {
+.result-card,
+.contract-footer {
   background: linear-gradient(170deg, var(--card), var(--bg-soft));
   border: 1px solid rgba(154, 169, 191, 0.2);
   border-radius: var(--radius);
@@ -63,7 +65,7 @@ h1 {
 
 .inputs {
   display: grid;
-  gap: 0.9rem;
+  gap: 0.95rem;
 }
 
 .field {
@@ -111,12 +113,18 @@ select:focus {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 0.75rem;
   padding: 0.8rem 0;
   border-bottom: 1px solid rgba(154, 169, 191, 0.14);
 }
 
-.metric span { color: var(--muted); }
-.metric strong { font-size: 1.1rem; }
+.metric span {
+  color: var(--muted);
+}
+
+.metric strong {
+  font-size: 1.1rem;
+}
 
 .contracts strong {
   font-size: 2.3rem;
@@ -127,27 +135,88 @@ select:focus {
 .hint {
   margin-top: 1rem;
   color: var(--muted);
+  line-height: 1.45;
+}
+
+.hint.warning {
+  color: var(--warn);
+}
+
+.contract-footer {
+  width: min(980px, 92vw);
+  margin: 0 auto 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.contract-footer p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.contract-footer strong {
+  color: var(--text);
 }
 
 @keyframes rise {
-  from { transform: translateY(8px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 860px) {
   .app-shell {
     grid-template-columns: 1fr;
-    margin: 1rem auto 1.4rem;
+    margin: 1rem auto 0.75rem;
+    gap: 0.9rem;
   }
 
   .panel,
-  .result-card {
+  .result-card,
+  .contract-footer {
     padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .inputs {
+    gap: 0.8rem;
+  }
+
+  .metric {
+    padding: 0.9rem 0;
+  }
+
+  .metric strong {
+    font-size: 1rem;
+  }
+
+  .contracts strong {
+    font-size: 2rem;
+  }
+
+  .contract-footer {
+    grid-template-columns: 1fr;
+    margin: 0 auto 1rem;
+    gap: 0.45rem;
+    font-size: 0.88rem;
   }
 }

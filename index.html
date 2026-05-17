@@ -64,6 +64,18 @@
           <span>Risk per Contract</span>
           <strong id="riskPerContract">$0.00</strong>
         </div>
+        <div class="metric">
+          <span>Risk %</span>
+          <strong id="riskPctDisplay">0.00%</strong>
+        </div>
+        <div class="metric">
+          <span>Reward % (Fixed Target)</span>
+          <strong id="rewardPctDisplay">0.50%</strong>
+        </div>
+        <div class="metric">
+          <span>R:R Ratio</span>
+          <strong id="rrRatioDisplay">0.00:1</strong>
+        </div>
         <div class="metric contracts">
           <span>Contracts to Open</span>
           <strong id="contracts">0</strong>
@@ -71,6 +83,13 @@
         <p class="hint" id="statusMessage">Enter valid values to calculate your position size.</p>
       </section>
     </main>
+
+    <footer class="contract-footer" aria-label="Contract point values">
+      <p><strong>MNQ</strong> = $2/point</p>
+      <p><strong>MES</strong> = $5/point</p>
+      <p><strong>MYM</strong> = $0.50/point</p>
+      <p><strong>MGC</strong> = $10/point</p>
+    </footer>
 
     <script src="script.js"></script>
   </body>
