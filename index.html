@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Micro Futures Position Sizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="panel">
+        <header class="panel__header">
+          <p class="eyebrow">Risk Management</p>
+          <h1>Micro Futures Position Sizer</h1>
+          <p class="subtext">
+            Instantly calculate how many micro contracts to open based on your account risk.
+          </p>
+        </header>
+
+        <form class="inputs" novalidate>
+          <label class="field">
+            <span>Account Balance (USD)</span>
+            <input id="accountBalance" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 25000" />
+            <small class="error" data-for="accountBalance"></small>
+          </label>
+
+          <label class="field">
+            <span>Risk Percentage (%)</span>
+            <input id="riskPercentage" type="number" inputmode="decimal" min="0" max="100" step="0.01" placeholder="e.g. 1" />
+            <small class="error" data-for="riskPercentage"></small>
+          </label>
+
+          <label class="field">
+            <span>Stop Loss Distance (points)</span>
+            <input id="stopLossPoints" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 25" />
+            <small class="error" data-for="stopLossPoints"></small>
+          </label>
+
+          <label class="field">
+            <span>Asset</span>
+            <select id="asset">
+              <option value="MNQ">MNQ · Micro Nasdaq ($2/point)</option>
+              <option value="MES">MES · Micro S&P 500 ($5/point)</option>
+              <option value="MYM">MYM · Micro Dow Jones ($0.50/point)</option>
+              <option value="MGC">MGC · Micro Gold ($10/point)</option>
+            </select>
+          </label>
+        </form>
+      </section>
+
+      <section class="result-card" aria-live="polite">
+        <h2>Position Sizing Result</h2>
+        <div class="metric">
+          <span>Max Risk (USD)</span>
+          <strong id="riskAmount">$0.00</strong>
+        </div>
+        <div class="metric">
+          <span>Risk per Contract</span>
+          <strong id="riskPerContract">$0.00</strong>
+        </div>
+        <div class="metric contracts">
+          <span>Contracts to Open</span>
+          <strong id="contracts">0</strong>
+        </div>
+        <p class="hint" id="statusMessage">Enter valid values to calculate your position size.</p>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
