@@ -5,11 +5,9 @@ const ASSET_POINT_VALUES = {
   MGC: 10,
 };
 
-const FIXED_REWARD_PERCENTAGE = 0.5;
-
 const inputs = {
   accountBalance: document.getElementById('accountBalance'),
-  riskPercentage: document.getElementById('riskPercentage'),
+  maxLossAmount: document.getElementById('maxLossAmount'),
   stopLossPoints: document.getElementById('stopLossPoints'),
   asset: document.getElementById('asset'),
 };
@@ -18,8 +16,6 @@ const outputs = {
   riskAmount: document.getElementById('riskAmount'),
   riskPerContract: document.getElementById('riskPerContract'),
   riskPctDisplay: document.getElementById('riskPctDisplay'),
-  rewardPctDisplay: document.getElementById('rewardPctDisplay'),
-  rrRatioDisplay: document.getElementById('rrRatioDisplay'),
   contracts: document.getElementById('contracts'),
   statusMessage: document.getElementById('statusMessage'),
 };
@@ -41,20 +37,25 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
-function validateInputs(balance, riskPct, stopLoss) {
+function validateInputs(balance, maxLossAmount, stopLoss) {
   let valid = true;
 
   showError('accountBalance', '');
-  showError('riskPercentage', '');
+  showError('maxLossAmount', '');
   showError('stopLossPoints', '');
 
   if (!Number.isFinite(balance) || balance <= 0) {
-    showError('accountBalance', 'Enter a valid amount greater than 0.');
+    showError('accountBalance', 'Enter an account balance greater than 0.');
     valid = false;
   }
 
-  if (!Number.isFinite(riskPct) || riskPct <= 0 || riskPct > 100) {
-    showError('riskPercentage', 'Use a value between 0.01 and 100.');
+  if (!Number.isFinite(maxLossAmount) || maxLossAmount <= 0) {
+    showError('maxLossAmount', 'Enter a max loss amount greater than 0.');
+    valid = false;
+  }
+
+  if (Number.isFinite(maxLossAmount) && Number.isFinite(balance) && maxLossAmount > balance) {
+    showError('maxLossAmount', 'Max loss cannot exceed account balance.');
     valid = false;
   }
 
@@ -66,35 +67,34 @@ function validateInputs(balance, riskPct, stopLoss) {
   return valid;
 }
 
+function resetOutputs() {
+  outputs.riskAmount.textContent = '$0.00';
+  outputs.riskPerContract.textContent = '$0.00';
+  outputs.riskPctDisplay.textContent = '0.00%';
+  outputs.contracts.textContent = '0';
+  outputs.statusMessage.textContent = 'Please fix the highlighted fields.';
+  outputs.statusMessage.classList.remove('warning');
+}
+
 function calculatePositionSize() {
   const accountBalance = toNumber(inputs.accountBalance.value);
-  const riskPercentage = toNumber(inputs.riskPercentage.value);
+  const maxLossAmount = toNumber(inputs.maxLossAmount.value);
   const stopLossPoints = toNumber(inputs.stopLossPoints.value);
   const asset = inputs.asset.value;
   const pointValue = ASSET_POINT_VALUES[asset];
 
-  if (!validateInputs(accountBalance, riskPercentage, stopLossPoints)) {
-    outputs.riskAmount.textContent = '$0.00';
-    outputs.riskPerContract.textContent = '$0.00';
-    outputs.riskPctDisplay.textContent = '0.00%';
-    outputs.rewardPctDisplay.textContent = `${FIXED_REWARD_PERCENTAGE.toFixed(2)}%`;
-    outputs.rrRatioDisplay.textContent = '0.00:1';
-    outputs.contracts.textContent = '0';
-    outputs.statusMessage.textContent = 'Please fix the highlighted fields.';
-    outputs.statusMessage.classList.remove('warning');
+  if (!validateInputs(accountBalance, maxLossAmount, stopLossPoints)) {
+    resetOutputs();
     return;
   }
 
-  const riskAmount = accountBalance * (riskPercentage / 100);
+  const riskPercentage = (maxLossAmount / accountBalance) * 100;
   const riskPerContract = stopLossPoints * pointValue;
-  const contracts = Math.floor(riskAmount / riskPerContract);
-  const rrRatio = FIXED_REWARD_PERCENTAGE / riskPercentage;
+  const contracts = Math.floor(maxLossAmount / riskPerContract);
 
-  outputs.riskAmount.textContent = formatCurrency(riskAmount);
+  outputs.riskAmount.textContent = formatCurrency(maxLossAmount);
   outputs.riskPerContract.textContent = formatCurrency(riskPerContract);
   outputs.riskPctDisplay.textContent = `${riskPercentage.toFixed(2)}%`;
-  outputs.rewardPctDisplay.textContent = `${FIXED_REWARD_PERCENTAGE.toFixed(2)}%`;
-  outputs.rrRatioDisplay.textContent = `${rrRatio.toFixed(2)}:1`;
   outputs.contracts.textContent = String(Math.max(0, contracts));
 
   if (contracts < 1) {
@@ -112,15 +112,16 @@ function calculatePositionSize() {
   }
 
   if (warnings.length > 0) {
-    outputs.statusMessage.textContent = `${warnings.join(' ')} You can open up to ${contracts} ${asset} micro contract${contracts > 1 ? 's' : ''}.`;
+    outputs.statusMessage.textContent = `${warnings.join(' ')} Position size supports up to ${contracts} ${asset} contract${contracts > 1 ? 's' : ''}.`;
     outputs.statusMessage.classList.add('warning');
   } else {
-    outputs.statusMessage.textContent = `You can open up to ${contracts} ${asset} micro contract${contracts > 1 ? 's' : ''}.`;
+    outputs.statusMessage.textContent = `Position size supports up to ${contracts} ${asset} contract${contracts > 1 ? 's' : ''}.`;
     outputs.statusMessage.classList.remove('warning');
   }
 }
 
 inputs.accountBalance.value = '50000';
+inputs.maxLossAmount.value = '250';
 
 Object.values(inputs).forEach((element) => {
   element.addEventListener('input', calculatePositionSize);
